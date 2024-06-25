@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 import styles from "./City.module.css";
 
 const formatDate = (date) =>
@@ -9,6 +11,8 @@ const formatDate = (date) =>
   }).format(new Date(date));
 
 function City() {
+  const navigate = useNavigate();
+
   // TEMP DATA
   const currentCity = {
     cityName: "Lisbon",
@@ -51,7 +55,17 @@ function City() {
         </a>
       </div>
 
-      <div>{/* <ButtonBack /> */}</div>
+      <div>
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            navigate(-1);
+          }}
+          type="back"
+        >
+          Go Back
+        </Button>
+      </div>
     </div>
   );
 }
