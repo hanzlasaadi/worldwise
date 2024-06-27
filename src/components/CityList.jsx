@@ -5,7 +5,7 @@ import Message from "./Message";
 import { useCities } from "../contexts/CityContext";
 
 function CityList() {
-  const { cities, isLoading, currentCityId } = useCities();
+  const { cities, isLoading } = useCities();
 
   if (isLoading) return <Spinner />;
 
@@ -19,7 +19,7 @@ function CityList() {
   return (
     <ul className={styles.cityList}>
       {cities.map((city) => (
-        <CityItem city={city} currentCityId={currentCityId} key={city.id} />
+        <CityItem city={city} key={city.id} />
       ))}
     </ul>
   );
