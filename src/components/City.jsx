@@ -1,6 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "./Button";
 import styles from "./City.module.css";
+import { useEffect } from "react";
+import { useCities } from "../contexts/CityContext";
+import Spinner from "./Spinner";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en", {
@@ -11,15 +14,26 @@ const formatDate = (date) =>
   }).format(new Date(date));
 
 function City() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
+  const { getCity, currentCity, isLoading } = useCities();
+
+  useEffect(() => {
+    // if (!id) return;
+    // fetch city by id
+    getCity(id);
+  }, [id]);
+
   // TEMP DATA
-  const currentCity = {
-    cityName: "Lisbon",
-    emoji: "🇵🇹",
-    date: "2027-10-31T15:59:59.138Z",
-    notes: "My favorite city so far!",
-  };
+  // const currentCitynb = {
+  //   cityName: "Lisbon",
+  //   emoji: "🇵🇹",
+  //   date: "2027-10-31T15:59:59.138Z",
+  //   notes: "My favorite city so far!",
+  // };
+
+  if (isLoading || !currentCity) return <Spinner />;
 
   const { cityName, emoji, date, notes } = currentCity;
 
