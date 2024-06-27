@@ -17,13 +17,17 @@ function City() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { getCity, currentCity, isLoading } = useCities();
+  const { getCity, currentCity, isLoading, setCurrentCity } = useCities();
 
   useEffect(() => {
     // if (!id) return;
     // fetch city by id
     getCity(id);
-  }, [id]);
+
+    return () => setCurrentCity(null);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, setCurrentCity]);
 
   // TEMP DATA
   // const currentCitynb = {
