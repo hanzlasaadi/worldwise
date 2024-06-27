@@ -10,9 +10,9 @@ function Button({ children = null, onClick, type }) {
 }
 
 Button.propTypes = {
-  children: PropTypes.node.isRequired,
-  onClick: PropTypes.func.isRequired,
-  type: PropTypes.string.isRequired,
+  children: PropTypes.node,
+  onClick: PropTypes.func,
+  type: PropTypes.string,
 };
 
 export default Button;
