@@ -1,6 +1,9 @@
 // "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=0&longitude=0"
 
 import { useEffect, useReducer } from "react";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 import styles from "./Form.module.css";
 import Button from "./Button";
@@ -9,8 +12,9 @@ import { useUrlParams } from "../hooks/useUrlParams";
 import { CITY_DATA_URL } from "../utils/constants";
 import Spinner from "./Spinner";
 import Message from "./Message";
+import { useCities } from "../contexts/CityContext";
 
-export function convertToEmoji(countryCode) {
+function convertToEmoji(countryCode) {
   const codePoints = countryCode
     .toUpperCase()
     .split("")
@@ -52,6 +56,9 @@ function reducer(currState, action) {
       newObj[action.valueName] = action.value;
       return newObj;
     }
+    case "setNewCity": {
+      return { ...currState };
+    }
     default:
       return currState;
   }
@@ -62,8 +69,10 @@ function Form() {
 
   const [lat, lng] = useUrlParams();
 
+  const { isLoading, setCity } = useCities();
+
   const [
-    { cityName, emoji, notes, date, isFetchingData, geocodingError },
+    { cityName, country, emoji, notes, date, isFetchingData, geocodingError },
     dispatch,
   ] = useReducer(reducer, initialState);
 
@@ -75,7 +84,6 @@ function Form() {
           `${CITY_DATA_URL}?latitude=${lat}&longitude=${lng}`
         );
         const data = await res.json();
-        console.log(data);
 
         if (!data.countryCode)
           dispatch({
@@ -99,12 +107,31 @@ function Form() {
     fetchCityData();
   }, [lat, lng]);
 
-  if (isFetchingData) return <Spinner />;
+  if (isFetchingData || isLoading) return <Spinner />;
 
   if (geocodingError) return <Message message={geocodingError} />;
 
   return (
-    <form className={styles.form}>
+    <form
+      className={styles.form}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const obj = {
+          cityName,
+          country,
+          emoji,
+          date,
+          notes,
+          position: {
+            lat,
+            lng,
+          },
+        };
+        const retVal = await setCity(obj);
+        if (retVal) dispatch({ type: "error", payload: retVal });
+        else navigate("/app");
+      }}
+    >
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
         <input
@@ -123,7 +150,20 @@ function Form() {
 
       <div className={styles.row}>
         <label htmlFor="date">When did you go to {cityName}?</label>
-        <input
+        <DatePicker
+          id="date"
+          selected={date}
+          dateFormat="dd/MM/yyyy"
+          onChange={(d) =>
+            dispatch({
+              type: "setValue",
+              valueName: "date",
+              value: d,
+            })
+          }
+          value={date}
+        />
+        {/* <input
           id="date"
           onChange={(e) =>
             dispatch({
@@ -133,7 +173,7 @@ function Form() {
             })
           }
           value={date}
-        />
+        /> */}
       </div>
 
       <div className={styles.row}>
@@ -152,7 +192,7 @@ function Form() {
       </div>
 
       <div className={styles.buttons}>
-        <button>Add</button>
+        <Button type="primary">Add</Button>
         <Button
           type="back"
           onClick={(e) => {
