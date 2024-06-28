@@ -17,17 +17,19 @@ function City() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { getCity, currentCity, isLoading, setCurrentCity } = useCities();
+  const { getCity, currentCity, isLoading } = useCities();
 
   useEffect(() => {
     // if (!id) return;
     // fetch city by id
     getCity(id);
 
-    return () => setCurrentCity(null);
+    // Don't need anymore bcz of the feature: "current city not fetched again on double click"
+    // return () => setCurrentCity(null);
+    // return () => dispatch({type: 'city/unmounted'});
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, setCurrentCity]);
+  }, [id]);
 
   // TEMP DATA
   // const currentCitynb = {
