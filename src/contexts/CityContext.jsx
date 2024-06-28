@@ -71,6 +71,7 @@ function CityProvider({ children }) {
       await fetch(`${BASE_URL}/cities/${id}`, { method: "DELETE" });
 
       setCities((c) => c.filter((city) => city.id !== id));
+      setCurrentCityId((currId) => (currId === id ? "" : currId));
 
       return false;
     } catch (error) {
